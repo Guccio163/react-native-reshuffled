@@ -1,19 +1,30 @@
-cmake_minimum_required(VERSION 3.10)
 project(NitroReshuffle)
+cmake_minimum_required(VERSION 3.9.0)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_STANDARD 20)
+set (PACKAGE_NAME NitroReshuffle)
+set (CMAKE_VERBOSE_MAKEFILE ON)
+set (CMAKE_CXX_STANDARD 20)
 
-# Define the library
-add_library(NitroReshuffle SHARED
-  # Your C++ implementation
-  ../cpp/HybridReshuffle.cpp
+# Define C++ library and add all sources
+add_library(${PACKAGE_NAME} SHARED
+        src/main/cpp/cpp-adapter.cpp
+        ../cpp/HybridReshuffle.cpp
 )
 
-# Add header search paths
-target_include_directories(NitroReshuffle PRIVATE
-  ../cpp
-)
-
-# Include Nitrogen autolinking (add generated specs, link NitroModules, etc.)
+# Add Nitrogen specs :)
 include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/NitroReshuffle+autolinking.cmake)
+
+# Set up local includes
+include_directories(
+        "src/main/cpp"
+        "../cpp"
+)
+
+find_library(LOG_LIB log)
+
+# Link all libraries together
+target_link_libraries(
+        ${PACKAGE_NAME}
+        ${LOG_LIB}
+        android                                   # <-- Android core
+)

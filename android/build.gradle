@@ -5,35 +5,61 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.4.2"
+    classpath "com.android.tools.build:gradle:8.13.2"
   }
 }
 
 def reactNativeArchitectures() {
-  def value = project.getProperties().get("reactNativeArchitectures")
-  return value ? value.split(",") : ["armeabi-v7a", "x86", "arm64-v8a", "x86_64"]
+  def value = rootProject.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
 def isNewArchitectureEnabled() {
-  return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+  return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
 }
 
 apply plugin: "com.android.library"
+apply plugin: 'org.jetbrains.kotlin.android'
+apply from: '../nitrogen/generated/android/NitroReshuffle+autolinking.gradle'
+apply from: "./fix-prefab.gradle"
+
+if (isNewArchitectureEnabled()) {
+  apply plugin: "com.facebook.react"
+}
+
+def getExtOrDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["NitroReshuffle_" + name]
+}
+
+def getExtOrIntegerDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["NitroReshuffle_" + name]).toInteger()
+}
 
 android {
   namespace "com.margelo.nitro.reshuffle"
-  compileSdkVersion safeExtGet("compileSdkVersion", 34)
+
+  ndkVersion getExtOrDefault("ndkVersion")
+  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
   defaultConfig {
-    minSdkVersion safeExtGet("minSdkVersion", 21)
-    targetSdkVersion safeExtGet("targetSdkVersion", 34)
+    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
     externalNativeBuild {
       cmake {
-        cppFlags "-O2 -frtti -fexceptions -Wall -fstack-protector-all"
-        arguments "-DANDROID_STL=c++_shared"
+        cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
+        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
         abiFilters (*reactNativeArchitectures())
+
+        buildTypes {
+          debug {
+            cppFlags "-O1 -g"
+          }
+          release {
+            cppFlags "-O2"
+          }
+        }
       }
     }
   }
@@ -44,64 +70,72 @@ android {
     }
   }
 
+  packagingOptions {
+    excludes = [
+            "META-INF",
+            "META-INF/**",
+            "**/libc++_shared.so",
+            "**/libfbjni.so",
+            "**/libjsi.so",
+            "**/libfolly_json.so",
+            "**/libfolly_runtime.so",
+            "**/libglog.so",
+            "**/libhermes.so",
+            "**/libhermes-executor-debug.so",
+            "**/libhermes_executor.so",
+            "**/libreactnative.so",
+            "**/libreactnativejni.so",
+            "**/libturbomodulejsijni.so",
+            "**/libreact_nativemodule_core.so",
+            "**/libjscexecutor.so"
+    ]
+  }
+
   buildFeatures {
     buildConfig true
     prefab true
   }
 
-  packagingOptions {
-    excludes = [
-      "META-INF/LICENSE",
-      "**/libc++_shared.so",
-      "**/libfbjni.so",
-      "**/libjsi.so",
-      "**/libfolly_json.so",
-      "**/libfolly_runtime.so",
-      "**/libglog.so",
-      "**/libhermes.so",
-      "**/libhermes-executor-debug.so",
-      "**/libhermes_executor.so",
-      "**/libreactnative.so",
-      "**/libreactnativejni.so",
-      "**/libturbomodulejsijni.so",
-      "**/libreact_nativemodule_core.so",
-      "**/libjscexecutor.so",
-      "**/libNitroModules.so"
-    ]
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lintOptions {
+    disable "GradleCompatible"
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
 
   sourceSets {
     main {
-      java.srcDirs += [
-        "${project.projectDir}/../nitrogen/generated/android/kotlin"
-      ]
-    }
-  }
-
-  publishing {
-    singleVariant("release") {
-      withSourcesJar()
+      if (isNewArchitectureEnabled()) {
+        java.srcDirs += [
+          // React Codegen files
+          "${project.buildDir}/generated/source/codegen/java"
+        ]
+      }
     }
   }
 }
 
 repositories {
-  maven {
-    url "$projectDir/../node_modules/react-native/android"
-  }
   mavenCentral()
   google()
 }
 
-def safeExtGet(prop, fallback) {
-  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
-
-apply from: '../nitrogen/generated/android/NitroReshuffle+autolinking.gradle'
 
 dependencies {
+  // For < 0.71, this will be from the local maven repo
+  // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-android:+"
   implementation "com.facebook.react:react-native:+"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
+
+  // Add a dependency on NitroModules
+  implementation project(":react-native-nitro-modules")
 }
+
