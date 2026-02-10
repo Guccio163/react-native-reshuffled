@@ -1,0 +1,17 @@
+// fix-prefab.gradle
+// Fixes for Android prefab issues with React Native
+
+ext.safeAppExtGet = { prop, fallback ->
+    return rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+def reactNativeRootDir = file("$projectDir/../node_modules/react-native")
+def reactNativeAndroidDir = file("$reactNativeRootDir/android")
+
+if (reactNativeAndroidDir.exists()) {
+    android {
+        buildFeatures {
+            prefab true
+        }
+    }
+}

@@ -10,7 +10,11 @@ module.exports = {
       /**
        * @type {import('@react-native-community/cli-types').AndroidDependencyParams}
        */
-      android: {},
+      android: {
+        packageImportPath:
+          'import com.margelo.nitro.reshuffle.NitroReshufflePackage;',
+        packageInstance: 'new NitroReshufflePackage()',
+      },
     },
   },
 }
