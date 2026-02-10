@@ -22,13 +22,14 @@ Pod::Spec.new do |s|
     "cpp/**/*.{hpp,cpp}",
   ]
 
-  s.pod_target_xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
-    "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/cpp\" \"$(PODS_TARGET_SRCROOT)/nitrogen/generated/shared\""
-  }
-
   load 'nitrogen/generated/ios/NitroReshuffle+autolinking.rb'
   add_nitrogen_files(s)
+
+  # Add header search paths AFTER autolinking (to not be overwritten)
+  current_xcconfig = s.attributes_hash['pod_target_xcconfig'] || {}
+  s.pod_target_xcconfig = current_xcconfig.merge({
+    "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/cpp\" \"$(PODS_TARGET_SRCROOT)/nitrogen/generated/shared\""
+  })
 
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
