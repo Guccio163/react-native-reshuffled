@@ -1,0 +1,17 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": ["reshuffle"],
+  "ios": {
+    "iosModuleName": "NitroReshuffle"
+  },
+  "android": {
+    "androidNamespace": ["reshuffle"],
+    "androidCxxLibName": "NitroReshuffle"
+  },
+  "autolinking": {
+    "Reshuffle": {
+      "cpp": "HybridReshuffle"
+    }
+  },
+  "ignorePaths": ["**/node_modules"]
+}

@@ -1,0 +1,202 @@
+#include "HybridReshuffle.hpp"
+#include <cmath>
+#include <algorithm>
+#include <limits>
+#include <iterator>
+
+namespace margelo::nitro::reshuffle {
+
+    // --- Implementacja metod pomocniczych ---
+
+
+    std::vector<std::vector<bool>> HybridReshuffle::getTrueArray2D(int rows, int cols) {
+        // return Array.from({ length: ROWS }, () => Array(COLUMNS).fill(true));
+        return std::vector<std::vector<bool>>(rows, std::vector<bool>(cols, true));
+    }
+
+    bool HybridReshuffle::isEnoughSpaceAvailable(
+        const std::vector<std::vector<bool>>& grid,
+        double cellHeight,
+        double cellWidth,
+        double startRow,
+        double startColumn,
+        int maxRows, // Arg
+        int maxCols  // Arg
+    ) {
+        int rLimit = static_cast<int>(cellHeight);
+        int cLimit = static_cast<int>(cellWidth);
+        int sRow = static_cast<int>(startRow);
+        int sCol = static_cast<int>(startColumn);
+
+        // Zabezpieczenie przed wyjściem poza zakres tablicy (w JS undefined, w C++ crash)
+        if (sRow + rLimit > maxRows || sCol + cLimit > maxCols) return false;
+
+        for (int r = 0; r < rLimit; r++) {
+            for (int c = 0; c < cLimit; c++) {
+                if (!grid[sRow + r][sCol + c]) return false;
+            }
+        }
+        return true;
+    }
+
+    std::vector<std::vector<bool>> HybridReshuffle::markTakenCells(
+        std::vector<std::vector<bool>> grid, // Kopia
+        const Cell& cell,
+        double targetRow,
+        double targetColumn,
+        int maxRows, // Arg
+        int maxCols  // Arg
+    ) {
+        int tRow = static_cast<int>(targetRow);
+        int tCol = static_cast<int>(targetColumn);
+        int height = static_cast<int>(cell.height);
+        int width = static_cast<int>(cell.width);
+
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                // Zakładamy, że sprawdzono isEnoughSpaceAvailable wcześniej, 
+                // ale dla bezpieczeństwa można dodać if check
+                if (tRow + r < maxRows && tCol + c < maxCols) {
+                    grid[tRow + r][tCol + c] = false;
+                }
+            }
+        }
+        return grid;
+    }
+
+    std::map<std::string, Position> HybridReshuffle::getPositions(const std::vector<Cell>& cells) {
+        std::map<std::string, Position> positions;
+        for (const auto& cell : cells) {
+            positions[cell.id] = { cell.startRow, cell.startColumn };
+        }
+        return positions;
+    }
+
+    double HybridReshuffle::getGridWeight(const std::vector<Cell>& oldGrid, const std::vector<Cell>& newGrid, double penalty) {
+        auto oldPositions = getPositions(oldGrid);
+        double totalWeight = 0;
+
+        for (const auto& cell : newGrid) {
+            // W TS jest oldPositions.get(cell.id)!. Zakładamy, że ID istnieje.
+            if (oldPositions.find(cell.id) != oldPositions.end()) {
+                const auto& oldPos = oldPositions.at(cell.id);
+                totalWeight += std::abs(cell.startRow - oldPos.startRow) +
+                               std::abs(cell.startColumn - oldPos.startColumn) +
+                               penalty;
+            }
+        }
+        return totalWeight;
+    }
+
+    std::vector<std::vector<Cell>> HybridReshuffle::getPossibleGrids(
+        GridData oldGrid,
+        std::vector<std::vector<bool>> freeGrid,
+        int maxRows, // Arg
+        int maxCols  // Arg
+    ) {
+        // const [currentCell, ...remainingCells] = oldGrid.cellsToBeSet;
+        if (oldGrid.cellsToBeSet.empty()) {
+            // if (!currentCell) return [oldGrid.cellsSet];
+            return { oldGrid.cellsSet };
+        }
+
+        Cell currentCell = oldGrid.cellsToBeSet.front();
+        
+        // remainingCells construction
+        std::vector<Cell> remainingCells(oldGrid.cellsToBeSet.begin() + 1, oldGrid.cellsToBeSet.end());
+
+        std::vector<std::vector<Cell>> possibleGrids;
+        int maxRow = maxRows - static_cast<int>(currentCell.height) + 1;
+        int maxCol = maxCols - static_cast<int>(currentCell.width) + 1;
+
+        for (int r = 0; r < maxRow; r++) {
+            for (int c = 0; c < maxCol; c++) {
+                if (!isEnoughSpaceAvailable(freeGrid, currentCell.height, currentCell.width, r, c, maxRows, maxCols)) {
+                    continue;
+                }
+
+                // const newCellsSet = [...oldGrid.cellsSet, { ...currentCell, startRow: r, startColumn: c }];
+                std::vector<Cell> newCellsSet = oldGrid.cellsSet;
+                Cell newPositionedCell = currentCell;
+                newPositionedCell.startRow = static_cast<double>(r);
+                newPositionedCell.startColumn = static_cast<double>(c);
+                newCellsSet.push_back(newPositionedCell);
+
+                // const newFreeGrid = markTakenCells(freeGrid, currentCell, r, c);
+                auto newFreeGrid = markTakenCells(freeGrid, currentCell, r, c, maxRows, maxCols);
+
+                // Rekurencja
+                GridData nextStepGridData = { newCellsSet, remainingCells };
+                auto recursiveResults = getPossibleGrids(nextStepGridData, newFreeGrid, maxRows, maxCols);
+
+                // possibleGrids.push(...getPossibleGrids(...));
+                possibleGrids.insert(possibleGrids.end(), recursiveResults.begin(), recursiveResults.end());
+            }
+        }
+        return possibleGrids;
+    }
+
+    // --- Główna metoda publiczna ---
+
+    // ZMIANA: Typ zwracany to std::vector<Cell>
+std::vector<Cell> HybridReshuffle::getNewGrid(
+    const std::vector<Cell>& currentCells,
+    double pickedCellIndex,
+    double targetRow,
+    double targetCol,
+    double rowsInput,    // Input z TS
+    double colsInput,    // Input z TS
+    double penaltyInput  // Input z TS
+) {
+    // 1. Walidacja
+    int pIndex = static_cast<int>(pickedCellIndex);
+
+    // Konwersja na int dla logiki
+        int R = static_cast<int>(rowsInput);
+        int C = static_cast<int>(colsInput);
+
+    if (pIndex < 0 || pIndex >= currentCells.size()) {
+        return currentCells;
+    }
+
+    // 2. Logika (bez std::async, wykonujemy "tu i teraz")
+    auto freeGrid = getTrueArray2D(R, C);
+    
+    Cell pickedCell = currentCells[pIndex];
+    pickedCell.startRow = targetRow;
+    pickedCell.startColumn = targetCol;
+
+    auto updatedFreeGrid = markTakenCells(freeGrid, pickedCell, targetRow, targetCol, R, C);
+
+    std::vector<Cell> remainingCells;
+    remainingCells.reserve(currentCells.size() - 1);
+    for (int i = 0; i < currentCells.size(); ++i) {
+        if (i != pIndex) {
+            remainingCells.push_back(currentCells[i]);
+        }
+    }
+
+    GridData initialGridData = { {pickedCell}, remainingCells };
+    auto possibleGrids = getPossibleGrids(initialGridData, updatedFreeGrid, R, C);
+
+    if (possibleGrids.empty()) {
+        return currentCells;
+    }
+
+    // 3. Szukanie najlepszego (algorytm)
+    std::vector<Cell> bestGrid = possibleGrids[0];
+    double bestWeight = getGridWeight(remainingCells, bestGrid, penaltyInput);
+
+    for (size_t i = 1; i < possibleGrids.size(); ++i) {
+        double weight = getGridWeight(remainingCells, possibleGrids[i], penaltyInput);
+        if (weight < bestWeight) {
+            bestWeight = weight;
+            bestGrid = possibleGrids[i];
+        }
+    }
+
+    // 4. Zwracamy wynik bezpośrednio
+    return bestGrid;
+}
+
+} // namespace

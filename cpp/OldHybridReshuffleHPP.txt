@@ -1,0 +1,80 @@
+#pragma once
+
+#include "HybridReshuffleSpec.hpp"
+#include <vector>
+#include <string>
+#include <future>
+#include <map>
+#include <optional>
+
+#include "Cell.hpp"
+
+// Dostosuj namespace do swojej konfiguracji
+namespace margelo::nitro::reshuffle {
+
+  // Pomocnicze struktury używane tylko wewnątrz C++ (odpowiedniki typów z TS)
+
+
+  struct Position {
+      double startRow;
+      double startColumn;
+  };
+
+  struct GridData {
+      std::vector<Cell> cellsSet;
+      std::vector<Cell> cellsToBeSet;
+  };
+
+
+  class HybridReshuffle : public HybridReshuffleSpec {
+  public:
+      HybridReshuffle() : HybridObject(TAG) {}
+
+      // Główna metoda z interfejsu
+      std::vector<Cell> getNewGrid(
+          const std::vector<Cell>& currentCells,
+          double pickedCellIndex,
+          double targetRow,
+          double targetCol,
+          double rows,    // <-- NOWE
+          double columns, // <-- NOWE
+          double penalty  // <-- NOWE
+      ) override;
+
+  private:
+
+      // Metody pomocnicze (wierne tłumaczenie z TS)
+      std::vector<std::vector<bool>> getTrueArray2D(int rows, int cols);
+      
+      bool isEnoughSpaceAvailable(
+          const std::vector<std::vector<bool>>& grid,
+          double cellHeight,
+          double cellWidth,
+          double startRow,
+          double startColumn,
+          int maxRows, // <-- NOWE
+          int maxCols  // <-- NOWE
+      );
+
+      std::vector<std::vector<bool>> markTakenCells(
+          std::vector<std::vector<bool>> grid, // przekazanie przez wartość tworzy kopię (jak w TS)
+          const Cell& cell,
+          double targetRow,
+          double targetColumn,
+          int maxRows, // <-- NOWE
+          int maxCols  // <-- NOWE
+      );
+
+      std::map<std::string, Position> getPositions(const std::vector<Cell>& cells);
+
+      double getGridWeight(const std::vector<Cell>& oldGrid, const std::vector<Cell>& newGrid, double penalty);
+
+      std::vector<std::vector<Cell>> getPossibleGrids(
+          GridData oldGrid,
+          std::vector<std::vector<bool>> freeGrid,
+          int maxRows, // <-- NOWE
+          int maxCols  // <-- NOWE
+      );
+  };
+
+}
