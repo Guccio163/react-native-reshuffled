@@ -44,6 +44,8 @@ export function DraggableRectangle<T extends Cell>({
     OLD_TRANSLATE_X_Y_DEFAULT,
     CONTAINER_WIDTH,
     CONTAINER_HEIGHT,
+    gapVertical,
+    gapHorizontal,
   } = useGridProps()
 
   const x = item.startColumn * CELL_WIDTH

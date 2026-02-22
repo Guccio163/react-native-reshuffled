@@ -25,8 +25,10 @@ interface ReshufflableGridProps<ItemT extends Cell> {
   rows: number
   columns: number
   style: StyleProp<ViewStyle>
-  gap?: number
+  gapVertical?: number
+  gapHorizontal?: number
   // IMPORTANT NOTE: Changing movePenalty slows down the whole algorithm the more the bigger its value is
+  // Experimental prop for now
   movePenalty?: number
 }
 
@@ -36,7 +38,8 @@ export default function ReshufflableGrid<T extends Cell>({
   renderShadow = (_info: RenderItemInfo<T>) => null,
   rows,
   columns,
-  gap = 0,
+  gapVertical = 0,
+  gapHorizontal = 0,
   movePenalty = 0,
   style,
 }: ReshufflableGridProps<T>) {
@@ -144,7 +147,8 @@ export default function ReshufflableGrid<T extends Cell>({
           gridHeight={dimensions.height}
           rows={rows}
           columns={columns}
-          gap={gap}
+          gapVertical={gapVertical}
+          gapHorizontal={gapHorizontal}
           movePenalty={movePenalty}
         >
           <View>

@@ -5,7 +5,8 @@ interface GridProps {
   gridHeight: number
   columns: number
   rows: number
-  gap: number
+  gapVertical: number
+  gapHorizontal: number
   movePenalty: number
 }
 interface GridContextType extends GridProps {
@@ -29,15 +30,16 @@ export const GridPropsContextProvider: React.FC<ProviderProps> = ({
   gridHeight,
   columns,
   rows,
-  gap,
+  gapVertical,
+  gapHorizontal,
   movePenalty,
 }) => {
   const CONTAINER_WIDTH = gridWidth
   const CONTAINER_HEIGHT = gridHeight
   const ROWS = rows
   const COLUMNS = columns
-  const CELL_WIDTH = CONTAINER_WIDTH / COLUMNS
-  const CELL_HEIGHT = CONTAINER_HEIGHT / ROWS
+  const CELL_WIDTH = (CONTAINER_WIDTH - gapHorizontal * (COLUMNS - 1)) / COLUMNS
+  const CELL_HEIGHT = (CONTAINER_HEIGHT - gapVertical * (ROWS - 1)) / ROWS
   const OLD_TRANSLATE_X_Y_DEFAULT = 0
   const MOVE_PENALTY = movePenalty
 
@@ -47,7 +49,8 @@ export const GridPropsContextProvider: React.FC<ProviderProps> = ({
       gridHeight,
       columns,
       rows,
-      gap,
+      gapVertical,
+      gapHorizontal,
       movePenalty,
       CELL_WIDTH,
       CELL_HEIGHT,
@@ -61,7 +64,8 @@ export const GridPropsContextProvider: React.FC<ProviderProps> = ({
       gridHeight,
       columns,
       rows,
-      gap,
+      gapVertical,
+      gapHorizontal,
       movePenalty,
       CELL_WIDTH,
       CELL_HEIGHT,
