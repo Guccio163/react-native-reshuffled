@@ -63,6 +63,8 @@ export default function App() {
         rows={CONFIGURATION_PAIRS[config].rows}
         columns={CONFIGURATION_PAIRS[config].columns}
         style={styles.grid}
+        gapVertical={5}
+        gapHorizontal={5}
       />
     </SafeAreaView>
   )

@@ -48,8 +48,8 @@ export function DraggableRectangle<T extends Cell>({
     gapHorizontal,
   } = useGridProps()
 
-  const x = item.startColumn * CELL_WIDTH
-  const y = item.startRow * CELL_HEIGHT
+  const x = item.startColumn * (CELL_WIDTH + gapHorizontal)
+  const y = item.startRow * (CELL_HEIGHT + gapVertical)
   const oldTranslateX = useSharedValue(OLD_TRANSLATE_X_Y_DEFAULT)
   const oldTranslateY = useSharedValue(OLD_TRANSLATE_X_Y_DEFAULT)
   const translateX = useSharedValue(x)
@@ -119,8 +119,14 @@ export function DraggableRectangle<T extends Cell>({
       translateY.value = newTranslateY
 
       // update dragged item's shadow's position (if required)
-      const newTranslateXrounded = round(newTranslateX, CELL_WIDTH)
-      const newTranslateYrounded = round(newTranslateY, CELL_HEIGHT)
+      const newTranslateXrounded = round(
+        newTranslateX,
+        CELL_WIDTH + gapHorizontal
+      )
+      const newTranslateYrounded = round(
+        newTranslateY,
+        CELL_HEIGHT + gapVertical
+      )
       if (newTranslateXrounded !== translateXrounded.value) {
         translateXrounded.value = newTranslateXrounded
       }
@@ -130,8 +136,12 @@ export function DraggableRectangle<T extends Cell>({
     })
     .onEnd(() => {
       isDragged.value = false
-      const targetCol = Math.round(translateXrounded.value / CELL_WIDTH)
-      const targetRow = Math.round(translateYrounded.value / CELL_HEIGHT)
+      const targetCol = Math.round(
+        translateXrounded.value / (CELL_WIDTH + gapHorizontal)
+      )
+      const targetRow = Math.round(
+        translateYrounded.value / (CELL_HEIGHT + gapVertical)
+      )
 
       let isOverlapping = false
       for (let r = 0; r < item.height; r++) {
@@ -161,8 +171,8 @@ export function DraggableRectangle<T extends Cell>({
         scheduleOnRN(
           updateItemsBeforeDrag,
           item.id,
-          oldTranslateX.value / CELL_WIDTH,
-          oldTranslateY.value / CELL_HEIGHT
+          oldTranslateX.value / (CELL_WIDTH + gapHorizontal),
+          oldTranslateY.value / (CELL_HEIGHT + gapVertical)
         )
       } else {
         translateX.value = translateXrounded.value
@@ -172,8 +182,8 @@ export function DraggableRectangle<T extends Cell>({
         scheduleOnRN(
           updateItemsBeforeDrag,
           item.id,
-          translateXrounded.value / CELL_WIDTH,
-          translateYrounded.value / CELL_HEIGHT
+          translateXrounded.value / (CELL_WIDTH + gapHorizontal),
+          translateYrounded.value / (CELL_HEIGHT + gapVertical)
         )
       }
       zIndex.value = 0
@@ -181,8 +191,8 @@ export function DraggableRectangle<T extends Cell>({
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      width: item.width * CELL_WIDTH,
-      height: item.height * CELL_HEIGHT,
+      width: item.width * (CELL_WIDTH + gapHorizontal) - gapHorizontal,
+      height: item.height * (CELL_HEIGHT + gapVertical) - gapVertical,
       position: 'absolute',
       zIndex: zIndex.value,
       transform: [
@@ -193,8 +203,8 @@ export function DraggableRectangle<T extends Cell>({
   })
   const shadowAnimatedStyle = useAnimatedStyle(() => {
     return {
-      width: item.width * CELL_WIDTH,
-      height: item.height * CELL_HEIGHT,
+      width: item.width * (CELL_WIDTH + gapHorizontal) - gapHorizontal,
+      height: item.height * (CELL_HEIGHT + gapVertical) - gapVertical,
       opacity: isShadowVisible.value ? 1 : 0,
       position: 'absolute',
       zIndex: 0,
