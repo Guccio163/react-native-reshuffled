@@ -1,6 +1,6 @@
 {
   "name": "react-native-reshuffled",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "react-native-reshuffled",
   "main": "src/index",
   "module": "src/index",
