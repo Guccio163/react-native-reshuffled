@@ -1,13 +1,7 @@
 import { Cell, getNewGrid } from '../../algorithm'
 import { DraggableRectangle } from '../DraggableRectangle'
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  LayoutChangeEvent,
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from 'react-native'
+import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useSharedValue } from 'react-native-reanimated'
 import { GridPropsContextProvider } from '../GridPropsContextProvider'
@@ -137,10 +131,7 @@ export default function ReshufflableGrid<T extends Cell>({
   const dimensionsDefaulted = dimensions.width === 0 || dimensions.height === 0
 
   return (
-    <GestureHandlerRootView
-      style={[style, styles.gridContainer]}
-      onLayout={onLayout}
-    >
+    <GestureHandlerRootView style={style} onLayout={onLayout}>
       {!dimensionsDefaulted && (
         <GridPropsContextProvider
           gridWidth={dimensions.width}
@@ -171,13 +162,3 @@ export default function ReshufflableGrid<T extends Cell>({
     </GestureHandlerRootView>
   )
 }
-
-const styles = StyleSheet.create({
-  gridContainer: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    // position: 'relative' jest domyślne, co pozwala na
-    // absolutne pozycjonowanie dzieci (prostokątów) wewnątrz
-  },
-})
