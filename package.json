@@ -71,8 +71,8 @@
     "react": "*",
     "react-native": "*",
     "react-native-nitro-modules": "*",
-    "react-native-gesture-handler": "*",
-    "react-native-reanimated": "*",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-reanimated": "~4.1.1",
     "react-native-worklets": "*"
   },
   "eslintConfig": {
