@@ -1,7 +1,5 @@
-export const HybridReshuffleObject = {
-  getNewGrid: () => {
-    console.warn('Algorytm C++ nie jest dostępny w przeglądarce via JSI.')
-    // Zwróć pustą tablicę lub cokolwiek, byle apka się nie wysypała
-    return []
-  },
-}
+import ReshufflableGrid from './components/ReshufflableGrid/index.web'
+import { RenderItemInfo } from './components/ReshufflableGrid/types'
+
+export { ReshufflableGrid, RenderItemInfo }
+export type { Cell } from './algorithm/index'

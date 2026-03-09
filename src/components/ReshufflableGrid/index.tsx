@@ -1,30 +1,12 @@
 import { Cell, getNewGrid } from '../../algorithm'
 import { DraggableRectangle } from '../DraggableRectangle'
 import React, { useCallback, useEffect, useState } from 'react'
-import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
+import { LayoutChangeEvent, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useSharedValue } from 'react-native-reanimated'
 import { GridPropsContextProvider } from '../GridPropsContextProvider'
 import { getOccupiedSlots } from './utils'
-
-export interface RenderItemInfo<ItemT> {
-  item: ItemT
-  index: number
-}
-
-interface ReshufflableGridProps<ItemT extends Cell> {
-  data: ItemT[]
-  renderItem: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
-  renderShadow?: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
-  rows: number
-  columns: number
-  style: StyleProp<ViewStyle>
-  gapVertical?: number
-  gapHorizontal?: number
-  // IMPORTANT NOTE: Changing movePenalty slows down the whole algorithm the more the bigger its value is
-  // Experimental prop for now
-  movePenalty?: number
-}
+import { RenderItemInfo, ReshufflableGridProps } from './types'
 
 export default function ReshufflableGrid<T extends Cell>({
   data,
