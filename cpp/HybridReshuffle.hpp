@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <limits> // Potrzebne do nieskończoności
+#include <limits>
 
 #include "Cell.hpp"
 
@@ -31,14 +31,13 @@ namespace margelo::nitro::reshuffle {
 
   private:
 
-      // Zmieniamy na void, bo modyfikujemy grid "w miejscu" (Backtracking)
       static void toggleCells(
           std::vector<std::vector<bool>>& grid,
           const Cell& cell,
           int row,
           int col,
-          bool occupied, // true = zajmij, false = zwolnij
-          int maxRows,    // <-- Potrzebne do sprawdzania granic
+          bool occupied,
+          int maxRows,
           int maxCols
       );
 
@@ -48,23 +47,22 @@ namespace margelo::nitro::reshuffle {
           double cellWidth,
           int startRow,
           int startColumn,
-          int maxRows,    // <-- Potrzebne do sprawdzania granic
+          int maxRows,
           int maxCols
       );
 
-      // Główna funkcja rekurencyjna
       void solveRecursively(
-          std::vector<Cell>& currentSolution,    // Aktualnie budowane rozwiązanie
-          std::vector<Cell>& remainingCells,     // Komórki do ułożenia
-          std::vector<std::vector<bool>>& grid,  // Plansza (referencja!)
-          double currentWeight,                  // Koszt obecnego rozwiązania
-          double& bestWeight,                    // Najlepszy koszt znaleziony globalnie
-          std::vector<Cell>& bestSolution,       // Najlepsze rozwiązanie globalne
-          const std::map<std::string, Position>& originalPositions, // Do liczenia wagi
-          int maxRows,        // <-- Przekazujemy dalej
-          int maxCols,        // <-- Przekazujemy dalej
+          std::vector<Cell>& currentSolution,
+          std::vector<Cell>& remainingCells,
+          std::vector<std::vector<bool>>& grid,
+          double currentWeight,
+          double& bestWeight,
+          std::vector<Cell>& bestSolution,
+          const std::map<std::string, Position>& originalPositions,
+          int maxRows,
+          int maxCols,
           double movePenalty
       );
   };
 
-} // namespace
+}
