@@ -9,7 +9,7 @@ https://github.com/user-attachments/assets/3a8ed85b-adb2-4860-bc55-cc6fd155b214
 
 </details>
 <details>
-<summary>Android Demo 🍎 </summary>
+<summary>iOS Demo 🍎 </summary>
   
 https://github.com/user-attachments/assets/170737aa-ab90-4c5e-9479-25be29e8fd48
 
