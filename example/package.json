@@ -35,7 +35,7 @@
     "react-native-reanimated": "~4.1.1",
     "react-native-reshuffled": "file:..",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "~0.5.1"
+    "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
     "@react-native/metro-config": "^0.84.0",
