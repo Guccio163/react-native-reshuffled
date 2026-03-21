@@ -66,6 +66,10 @@ export default function App() {
     </View>
   )
 
+  const onDragEnd = (items: CellWithExtraData[]) => {
+    alert('onDragEnd')
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -82,6 +86,7 @@ export default function App() {
             data={defaultData}
             renderItem={renderItem}
             renderShadow={renderShadow}
+            onDragEnd={onDragEnd}
             rows={rows}
             columns={columns}
             style={styles.grid}

@@ -11,6 +11,7 @@ interface ReshufflableGridProps<ItemT extends Cell> {
   data: ItemT[]
   renderItem: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
   renderShadow?: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
+  onDragEnd?: (items: ItemT[]) => void
   rows: number
   columns: number
   style: StyleProp<ViewStyle>

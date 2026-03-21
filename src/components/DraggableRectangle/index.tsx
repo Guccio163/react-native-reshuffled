@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { scheduleOnRN } from 'react-native-worklets'
 import { useGridProps } from '../GridPropsContextProvider'
-import { RenderItemInfo } from '../ReshufflableGrid'
+import { RenderItemInfo } from '../ReshufflableGrid/types'
 
 type DraggableRectangleProps<ItemT extends Cell> = {
   item: ItemT
