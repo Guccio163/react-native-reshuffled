@@ -130,7 +130,7 @@ const generateInitialItems3 = (): Cell[] => {
 
 const generateInitialItems4 = (): Cell[] => {
   return [
-    // --- Górna sekcja ---
+    // --- Top section ---
     {
       id: `item-0`,
       width: 3,
@@ -156,7 +156,7 @@ const generateInitialItems4 = (): Cell[] => {
       startRow: 0,
     },
 
-    // --- Środkowa sekcja ---
+    // --- Middle section ---
     {
       id: `item-3`,
       width: 2,
@@ -174,7 +174,7 @@ const generateInitialItems4 = (): Cell[] => {
       startRow: 5,
     },
 
-    // --- Dolna sekcja ---
+    // --- Bottom section ---
     {
       id: `item-5`,
       width: 2,
