@@ -3,14 +3,14 @@ function clamp(
   itemDimensionValue: number,
   maxDimensionValue: number
 ) {
-  "worklet";
-  const maxX = maxDimensionValue - itemDimensionValue;
-  return Math.max(0, Math.min(value, maxX));
+  'worklet'
+  const maxX = maxDimensionValue - itemDimensionValue
+  return Math.max(0, Math.min(value, maxX))
 }
 
 function round(translateValue: number, period: number) {
-  "worklet";
-  return Math.round(translateValue / period) * period;
+  'worklet'
+  return Math.round(translateValue / period) * period
 }
 
-export { clamp, round };
+export { clamp, round }

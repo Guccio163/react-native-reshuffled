@@ -1,6 +1,10 @@
 import type { Cell, GetNewGridProps } from 'react-native-reshuffled'
 
-function cellKeysFor(item: Cell, startRow: number, startColumn: number): Set<string> {
+function cellKeysFor(
+  item: Cell,
+  startRow: number,
+  startColumn: number
+): Set<string> {
   const keys = new Set<string>()
   for (let r = 0; r < item.height; r++) {
     for (let c = 0; c < item.width; c++) {

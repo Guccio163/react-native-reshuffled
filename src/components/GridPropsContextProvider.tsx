@@ -36,27 +36,28 @@ export const GridPropsContextProvider: React.FC<ProviderProps> = ({
   gapHorizontal,
   movePenalty,
 }) => {
-  const CONTAINER_WIDTH = gridWidth
-  const CONTAINER_HEIGHT = gridHeight
-  const ROWS = rows
-  const COLUMNS = columns
-  const CELL_WIDTH = (CONTAINER_WIDTH - gapHorizontal * (COLUMNS - 1)) / COLUMNS
-  const CELL_HEIGHT = (CONTAINER_HEIGHT - gapVertical * (ROWS - 1)) / ROWS
-  const OLD_TRANSLATE_X_Y_DEFAULT = 0
-  const MOVE_PENALTY = movePenalty
+  const value = useMemo(() => {
+    const CONTAINER_WIDTH = gridWidth
+    const CONTAINER_HEIGHT = gridHeight
+    const ROWS = rows
+    const COLUMNS = columns
+    const CELL_WIDTH =
+      (CONTAINER_WIDTH - gapHorizontal * (COLUMNS - 1)) / COLUMNS
+    const CELL_HEIGHT = (CONTAINER_HEIGHT - gapVertical * (ROWS - 1)) / ROWS
+    const OLD_TRANSLATE_X_Y_DEFAULT = 0
+    const MOVE_PENALTY = movePenalty
 
-  function getItemWidth(columnsSpanned: number) {
-    'worklet'
-    return columnsSpanned * CELL_WIDTH + gapHorizontal * (columnsSpanned - 1)
-  }
+    function getItemWidth(columnsSpanned: number) {
+      'worklet'
+      return columnsSpanned * CELL_WIDTH + gapHorizontal * (columnsSpanned - 1)
+    }
 
-  function getItemHeight(rowsSpanned: number) {
-    'worklet'
-    return rowsSpanned * CELL_HEIGHT + gapVertical * (rowsSpanned - 1)
-  }
+    function getItemHeight(rowsSpanned: number) {
+      'worklet'
+      return rowsSpanned * CELL_HEIGHT + gapVertical * (rowsSpanned - 1)
+    }
 
-  const value = useMemo(
-    () => ({
+    return {
       gridWidth,
       gridHeight,
       columns,
@@ -72,24 +73,16 @@ export const GridPropsContextProvider: React.FC<ProviderProps> = ({
       CONTAINER_HEIGHT,
       getItemWidth,
       getItemHeight,
-    }),
-    [
-      gridWidth,
-      gridHeight,
-      columns,
-      rows,
-      gapVertical,
-      gapHorizontal,
-      movePenalty,
-      CELL_WIDTH,
-      CELL_HEIGHT,
-      MOVE_PENALTY,
-      CONTAINER_WIDTH,
-      CONTAINER_HEIGHT,
-      getItemWidth,
-      getItemHeight,
-    ]
-  )
+    }
+  }, [
+    gridWidth,
+    gridHeight,
+    columns,
+    rows,
+    gapVertical,
+    gapHorizontal,
+    movePenalty,
+  ])
 
   return <GridContext.Provider value={value}>{children}</GridContext.Provider>
 }

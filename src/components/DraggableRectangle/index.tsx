@@ -75,7 +75,6 @@ export function DraggableRectangle<T extends Cell>({
     translateY.value = withTiming(y, { duration: 300 })
   }, [translateX, translateY, x, y])
 
-
   // Hook reacting to cell's translateX/Yrounded changes
   useAnimatedReaction(
     () => {
@@ -174,7 +173,6 @@ export function DraggableRectangle<T extends Cell>({
         }
       }
 
-   
       if (isOverlapping) {
         isShadowVisible.value = false
 
@@ -202,9 +200,8 @@ export function DraggableRectangle<T extends Cell>({
         )
       }
       setTimeout(() => {
-
-      zIndex.value = 997
-      shadowZIndex.value = 996
+        zIndex.value = 997
+        shadowZIndex.value = 996
       }, 200)
     })
 

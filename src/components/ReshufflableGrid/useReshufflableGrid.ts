@@ -118,7 +118,7 @@ export function useReshufflableGrid<T extends Cell>(
 
       setItems(nextItems)
       setItemsBeforeDrag(nextItems)
-      onDragEnd?.(nextItems)
+      notifyDragEnd(nextItems)
     },
     [items, notifyDragEnd]
   )

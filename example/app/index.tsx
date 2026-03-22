@@ -119,8 +119,7 @@ function buildScrambledPuzzle(layout: PuzzleGridMode): PuzzlePiece[] {
 
 function isPuzzleSolved(items: PuzzlePiece[]): boolean {
   return items.every(
-    (it) =>
-      it.startRow === it.targetRow && it.startColumn === it.targetColumn
+    (it) => it.startRow === it.targetRow && it.startColumn === it.targetColumn
   )
 }
 
@@ -136,8 +135,7 @@ function AppContent() {
   const burstConfetti = usePuzzleConfettiBurst()
   const [mode, setMode] = useState<AppMode>('demo')
   const [collisionsAllowed, setCollisionsAllowed] = useState(false)
-  const [puzzleGridMode, setPuzzleGridMode] =
-    useState<PuzzleGridMode>('grid12')
+  const [puzzleGridMode, setPuzzleGridMode] = useState<PuzzleGridMode>('grid12')
   const [puzzleData, setPuzzleData] = useState<PuzzlePiece[]>(() =>
     buildScrambledPuzzle('grid12')
   )
@@ -189,20 +187,14 @@ function AppContent() {
 
   const renderPuzzleItem = ({ item }: RenderItemInfo<PuzzlePiece>) => {
     const onTarget =
-      item.startRow === item.targetRow &&
-      item.startColumn === item.targetColumn
+      item.startRow === item.targetRow && item.startColumn === item.targetColumn
     const tr = item.targetRow
     const tc = item.targetColumn
     const stride = item.width
     const pieceCol = tc / stride
     const pieceRow = tr / stride
     return (
-      <View
-        style={[
-          styles.puzzlePiece,
-          onTarget && styles.puzzlePieceLocked,
-        ]}
-      >
+      <View style={[styles.puzzlePiece, onTarget && styles.puzzlePieceLocked]}>
         <View style={styles.puzzleImageClip}>
           <View
             style={[
@@ -235,20 +227,16 @@ function AppContent() {
   const onPuzzleDragEnd = (items: PuzzlePiece[]) => {
     if (isPuzzleSolved(items)) {
       burstConfetti(280)
-      Alert.alert(
-        'Solved!',
-        'The React Native logo is complete.',
-        [
-          {
-            text: 'New puzzle',
-            onPress: () => {
-              setPuzzleData(buildScrambledPuzzle(puzzleGridMode))
-              setPuzzleSession((s) => s + 1)
-            },
+      Alert.alert('Solved!', 'The React Native logo is complete.', [
+        {
+          text: 'New puzzle',
+          onPress: () => {
+            setPuzzleData(buildScrambledPuzzle(puzzleGridMode))
+            setPuzzleSession((s) => s + 1)
           },
-          { text: 'OK', style: 'cancel' },
-        ]
-      )
+        },
+        { text: 'OK', style: 'cancel' },
+      ])
     }
   }
 

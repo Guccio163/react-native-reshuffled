@@ -101,7 +101,13 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "babel.config.js",
+    "react-native.config.js",
+    "example/babel.config.js",
+    "example/eslint.config.js",
+    "example/metro.config.js",
+    "nitrogen/"
   ],
   "prettier": {
     "quoteProps": "consistent",
