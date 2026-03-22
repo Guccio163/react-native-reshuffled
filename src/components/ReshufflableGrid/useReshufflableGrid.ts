@@ -19,6 +19,7 @@ export function useReshufflableGrid<T extends Cell>(
     gapHorizontal = 0,
     movePenalty = 0,
     onDragEnd,
+    allowCollisions = false,
   } = props
 
   const notifyDragEnd = useCallback(
@@ -46,6 +47,17 @@ export function useReshufflableGrid<T extends Cell>(
 
   const handleDragUpdate = useCallback(
     (draggedItemId: string, finalX: number, finalY: number) => {
+      // safe fallback if dragged item was dropped before calculating the grid
+      // if it was dropped on free place, it will just update with updateItemsBeforeDrag
+      // if it was dropped on (in that time) taken place, it will go back to its place
+      if (!isDragged.value) {
+        return
+      }
+      
+      if (allowCollisions) {
+        return
+      }
+
       const cellWidth = dimensions.width / columns
       const cellHeight = dimensions.height / rows
       const draggedItem = itemsBeforeDrag.find(
@@ -73,15 +85,10 @@ export function useReshufflableGrid<T extends Cell>(
         const new_i = itemsWithoutDragged.find((item) => item.id === i.id)
         return { ...i, ...new_i }
       })
-      // safe fallback if dragged item was dropped before calculating the grid
-      // if it was dropped on free place, it will just update with updateItemsBeforeDrag
-      // if it was dropped on (in that time) taken place, it will go back to its place
-      if (!isDragged.value) {
-        return
-      }
       setItems(itemsToSet)
     },
     [
+      allowCollisions,
       columns,
       dimensions.height,
       dimensions.width,
@@ -145,5 +152,6 @@ export function useReshufflableGrid<T extends Cell>(
     updateItemsBeforeDrag,
     occupiedSlots,
     isDragged,
+    allowCollisions,
   }
 }

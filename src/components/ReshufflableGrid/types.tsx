@@ -17,6 +17,8 @@ interface ReshufflableGridProps<ItemT extends Cell> {
   style: StyleProp<ViewStyle>
   gapVertical?: number
   gapHorizontal?: number
+  /** When true, dropping a cell only moves that item; others are not reshuffled. Overlaps are allowed. */
+  allowCollisions?: boolean
   // IMPORTANT NOTE: Changing movePenalty slows down the whole algorithm the more the bigger its value is
   // Experimental prop for now
   movePenalty?: number

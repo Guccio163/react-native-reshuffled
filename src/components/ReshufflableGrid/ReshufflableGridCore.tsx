@@ -33,6 +33,7 @@ export function ReshufflableGridCore<T extends Cell>(
     updateItemsBeforeDrag,
     occupiedSlots,
     isDragged,
+    allowCollisions,
   } = useReshufflableGrid(gridProps, getNewGrid)
 
   return (
@@ -45,12 +46,14 @@ export function ReshufflableGridCore<T extends Cell>(
                 key={item.id}
                 item={item}
                 index={index}
+                totalItemCount={items.length}
                 renderItem={renderItem}
                 renderShadow={renderShadow}
                 onDragUpdate={handleDragUpdate}
                 updateItemsBeforeDrag={updateItemsBeforeDrag}
                 occupiedSlots={occupiedSlots}
                 isDragged={isDragged}
+                allowCollisions={allowCollisions}
               />
             ))}
           </View>

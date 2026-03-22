@@ -13,6 +13,16 @@ import { scheduleOnRN } from 'react-native-worklets'
 import { useGridProps } from '../GridPropsContextProvider'
 import { RenderItemInfo } from '../ReshufflableGrid/types'
 
+function getDefaultZIndex(index: number) {
+  'worklet'
+  return 10 + 2 * index
+}
+
+function getDefaultShawdowZIndex(index: number) {
+  'worklet'
+  return getDefaultZIndex(index) - 1
+}
+
 type DraggableRectangleProps<ItemT extends Cell> = {
   item: ItemT
   index: number
@@ -26,6 +36,7 @@ type DraggableRectangleProps<ItemT extends Cell> = {
   ) => void
   occupiedSlots: SharedValue<Record<string, string>>
   isDragged: SharedValue<boolean>
+  allowCollisions?: boolean
 }
 
 export function DraggableRectangle<T extends Cell>({
@@ -37,6 +48,7 @@ export function DraggableRectangle<T extends Cell>({
   updateItemsBeforeDrag,
   occupiedSlots,
   isDragged,
+  allowCollisions = false,
 }: DraggableRectangleProps<T>) {
   const {
     CELL_HEIGHT,
@@ -58,8 +70,8 @@ export function DraggableRectangle<T extends Cell>({
   const translateY = useSharedValue(y)
   const translateXrounded = useSharedValue(x)
   const translateYrounded = useSharedValue(y)
-
-  const zIndex = useSharedValue(1)
+  const zIndex = useSharedValue(getDefaultZIndex(index))
+  const shadowZIndex = useSharedValue(getDefaultShawdowZIndex(index))
 
   const isShadowVisible = useSharedValue(false)
 
@@ -101,7 +113,8 @@ export function DraggableRectangle<T extends Cell>({
       // save starting position
       oldTranslateX.value = translateX.value
       oldTranslateY.value = translateY.value
-      zIndex.value = 100
+      zIndex.value = 999
+      shadowZIndex.value = 998
       isShadowVisible.value = true
       isDragged.value = true
     })
@@ -146,21 +159,23 @@ export function DraggableRectangle<T extends Cell>({
       )
 
       let isOverlapping = false
-      for (let r = 0; r < item.height; r++) {
-        for (let c = 0; c < item.width; c++) {
-          const checkRow = targetRow + r
-          const checkCol = targetCol + c
+      if (!allowCollisions) {
+        for (let r = 0; r < item.height; r++) {
+          for (let c = 0; c < item.width; c++) {
+            const checkRow = targetRow + r
+            const checkCol = targetCol + c
 
-          const key = `${checkRow},${checkCol}`
-          const occupierId = occupiedSlots.value[key]
+            const key = `${checkRow},${checkCol}`
+            const occupierId = occupiedSlots.value[key]
 
-          // If the cell is occupied by something else -> Collision
-          if (occupierId && occupierId !== item.id) {
-            isOverlapping = true
-            break
+            // If the cell is occupied by something else -> Collision
+            if (occupierId && occupierId !== item.id) {
+              isOverlapping = true
+              break
+            }
           }
+          if (isOverlapping) break
         }
-        if (isOverlapping) break
       }
       if (isOverlapping) {
         isShadowVisible.value = false
@@ -188,7 +203,8 @@ export function DraggableRectangle<T extends Cell>({
           translateYrounded.value / (CELL_HEIGHT + gapVertical)
         )
       }
-      zIndex.value = 0
+      zIndex.value = 997
+      shadowZIndex.value = 996
     })
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -209,7 +225,7 @@ export function DraggableRectangle<T extends Cell>({
       height: getItemHeight(item.height),
       opacity: isShadowVisible.value ? 1 : 0,
       position: 'absolute',
-      zIndex: 0,
+      zIndex: shadowZIndex.value,
       transform: [
         { translateX: translateXrounded.value },
         { translateY: translateYrounded.value },
