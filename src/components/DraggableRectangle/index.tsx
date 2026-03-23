@@ -21,6 +21,7 @@ export function getDefaultZIndex(index: number): number {
 type DraggableRectangleProps<ItemT extends Cell> = {
   item: ItemT
   index: number
+  zIndexTrigger: number
   renderItem: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
   renderShadow: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
   onDragUpdate: (draggedItemId: string, finalX: number, finalY: number) => void
@@ -37,6 +38,7 @@ type DraggableRectangleProps<ItemT extends Cell> = {
 export function DraggableRectangle<T extends Cell>({
   item,
   index,
+  zIndexTrigger,
   renderItem,
   renderShadow,
   onDragUpdate,
@@ -67,13 +69,17 @@ export function DraggableRectangle<T extends Cell>({
   const translateYrounded = useSharedValue(y)
   const zIndex = useSharedValue(getDefaultZIndex(index))
   const shadowZIndex = useSharedValue(getDefaultZIndex(index) - 1)
-
   const isShadowVisible = useSharedValue(false)
 
   useEffect(() => {
     translateX.value = withTiming(x, { duration: 300 })
     translateY.value = withTiming(y, { duration: 300 })
   }, [translateX, translateY, x, y])
+
+  useEffect(() => {
+    zIndex.value = getDefaultZIndex(index)
+    shadowZIndex.value = getDefaultZIndex(index) - 1
+  }, [index, zIndexTrigger, zIndex, shadowZIndex])
 
   // Hook reacting to cell's translateX/Yrounded changes
   useAnimatedReaction(
@@ -199,10 +205,6 @@ export function DraggableRectangle<T extends Cell>({
           translateYrounded.value / (CELL_HEIGHT + gapVertical)
         )
       }
-      setTimeout(() => {
-        zIndex.value = 997
-        shadowZIndex.value = 996
-      }, 200)
     })
 
   const animatedStyle = useAnimatedStyle(() => {

@@ -32,7 +32,10 @@ export function useReshufflableGrid<T extends Cell>(
   const [items, setItems] = useState(data)
   const [itemsBeforeDrag, setItemsBeforeDrag] = useState(data)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
-
+  const [zIndexTrigger, setZIndexTrigger] = useState(true)
+  const triggerZIndexReevaluation = useCallback(() =>{
+    setZIndexTrigger((c: boolean) => !c)
+  }, [])
   const isDragged = useSharedValue<boolean>(false)
   const occupiedSlots = useSharedValue<Record<string, string>>({})
 
@@ -119,6 +122,7 @@ export function useReshufflableGrid<T extends Cell>(
       setItems(nextItems)
       setItemsBeforeDrag(nextItems)
       notifyDragEnd(nextItems)
+      triggerZIndexReevaluation()
     },
     [items, notifyDragEnd]
   )
@@ -137,6 +141,7 @@ export function useReshufflableGrid<T extends Cell>(
 
   return {
     items,
+    zIndexTrigger,
     dimensionsDefaulted,
     onLayout,
     gridProps,

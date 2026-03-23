@@ -27,6 +27,7 @@ export function ReshufflableGridCore<T extends Cell>(
 
   const {
     items,
+    zIndexTrigger,
     dimensionsDefaulted,
     onLayout,
     gridProps: contextGridProps,
@@ -47,6 +48,7 @@ export function ReshufflableGridCore<T extends Cell>(
                 key={item.id}
                 item={item}
                 index={index}
+                zIndexTrigger={zIndexTrigger}
                 renderItem={renderItem}
                 renderShadow={renderShadow}
                 onDragUpdate={handleDragUpdate}

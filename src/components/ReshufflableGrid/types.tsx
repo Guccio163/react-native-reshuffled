@@ -24,8 +24,7 @@ interface ReshufflableGridProps<ItemT extends Cell> {
   movePenalty?: number
   /**
    * Overrides the default reshuffle algorithm for live layout while dragging
-   * (only when `allowCollisions` is false). Drop uses normal rules: with collisions off,
-   * overlapping another item snaps back.
+   * (only when `allowCollisions` is false). Drop uses normal rules: with collisions restricted (allowCollisions is false), overlapping another item snaps back.
    */
   getNewGrid?: (props: GetNewGridProps) => Cell[]
 }
