@@ -108,14 +108,17 @@ const styles = StyleSheet.create({
 
 | Prop | Type | Description | Default |
 | :---- | :---- | :---- | :---- |
-| data | T[] extends Cell[] | Array of items to be rendered. | **Required** |
-| renderItem | (info: {item: ItemT, index: number}) => React.ReactElement \| null | Function returning a component for each item. | **Required** |
-| renderItem | (info: {item: ItemT, index: number}) => React.ReactElement \| null | Function returning a shadow component for each item. | null |
-| rows | number | Number of rows in the grid. | **Required** |
-| columns | number | Number of columns in the grid. | **Required** |
-| style | StyleProp<ViewStyle> | Grid's CSS style. | **Required** |
-| gapVertical | number | Vertical spacing between items in pixels. | 0 |
-| gapHorizontal | number | Horizontal spacing between items in pixels. | 0 |
+| `data` | `T[] extends Cell[]` | Array of items to be rendered. | **Required** |
+| `renderItem` | `(info: {item: ItemT, index: number}) => React.ReactElement \| null` | Function returning a component for each item. | **Required** |
+| `renderShadow` | `(info: {item: ItemT, index: number}) => React.ReactElement \| null` | Function returning a shadow/ghost component shown at the drop target while dragging. | `null` |
+| `rows` | `number` | Number of rows in the grid. | **Required** |
+| `columns` | `number` | Number of columns in the grid. | **Required** |
+| `style` | `StyleProp<ViewStyle>` | Style applied to the grid container. | — |
+| `gapVertical` | `number` | Vertical spacing between items in pixels. | `0` |
+| `gapHorizontal` | `number` | Horizontal spacing between items in pixels. | `0` |
+| `allowCollisions` | `boolean` | When `true`, items can overlap each other and the grid does not auto-adjust positions on drop. | `false` |
+| `getNewGrid` | `(props: GetNewGridProps) => Cell[]` | Custom callback that overrides the default reshuffling algorithm. Receives the current grid state and drop target, returns the desired new layout. | — |
+| `onDragEnd` | `(items: T[]) => void` | Called after every drop with the updated item array. | — |
 
 ## **🛠 Why not FlatList?**
 
@@ -125,11 +128,9 @@ react-native-reshuffled breaks these limitations by allowing you to define a tru
 
 ## **🚧 Planned additions**
 
-react-native-reshuffled strives to deliver the most useful grid to developers and that's why I'm planning on also adding:
+- Expanded web support.
 
-1. `onChange` callback, to let developers define extra actions' worklet, fired always when item gets moved.
-
-If you think of some great, useful additions, let me know and I'll do my best to incorporate it here! 😃
+Have an idea for a useful addition? Feel free to open an issue! 😃
 
 ## **📄 License**
 
