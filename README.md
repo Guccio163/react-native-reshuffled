@@ -50,22 +50,20 @@ npm install react-native-nitro-modules react-native-reanimated react-native-gest
 ## **🚀 Quick Start**
 ```typescript
 import React, { useState } from 'react';  
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';  
-import { ReshuffledGrid } from 'react-native-reshuffled';
+import { View, StyleSheet, Text } from 'react-native';  
+import { Reshuffled } from 'react-native-reshuffled';
 
 const App = () => {  
   const [data, setData] = useState([  
-    { id: '1', color: '#6200EE', title: 'A', width:1, height: 1, startColumn: 0, startRow: 0 },  
-    { id: '2', color: '#03DAC6', title: 'B', width:1, height: 1, startColumn: 1, startRow: 0 },  
-    { id: '3', color: '#B00020', title: 'C', width:1, height: 1, startColumn: 0, startRow: 1 },  
-    { id: '4', color: '#FFDE03', title: 'D', width:2, height: 1, startColumn: 0, startRow: 2 },  
+    { id: '1', color: '#6200EE', title: 'A', width: 1, height: 1, startColumn: 0, startRow: 0 },  
+    { id: '2', color: '#03DAC6', title: 'B', width: 1, height: 1, startColumn: 1, startRow: 0 },  
+    { id: '3', color: '#B00020', title: 'C', width: 1, height: 1, startColumn: 0, startRow: 1 },  
+    { id: '4', color: '#FFDE03', title: 'D', width: 2, height: 1, startColumn: 0, startRow: 2 },  
   ]);
 
   return (  
     <View style={styles.container}>  
-      <Text style={styles.btnText}>RESHUFFLED: GRID<Text>  
-
-      <ReshuffledGrid
+      <Reshuffled.Grid
         data={data}  
         columns={2}
         rows={3}
@@ -73,7 +71,7 @@ const App = () => {
         gapHorizontal={12}  
         renderItem={({ item }) => (  
           <View style={[styles.card, { backgroundColor: item.color }]}>  
-             <Text style={styles.cardText}>{item.title}</Text>  
+            <Text style={styles.cardText}>{item.title}</Text>  
           </View>  
         )}  
       />  

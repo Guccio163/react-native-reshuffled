@@ -1,4 +1,4 @@
-import { ReshufflableGrid, RenderItemInfo, Cell } from 'react-native-reshuffled'
+import { Reshuffled, RenderItemInfo, Cell } from 'react-native-reshuffled'
 import {
   PuzzleConfettiRoot,
   usePuzzleConfettiBurst,
@@ -354,7 +354,7 @@ function AppContent() {
       <View style={styles.gridWrapper}>
         <View style={styles.gridBoard}>
           {mode === 'demo' ? (
-            <ReshufflableGrid
+            <Reshuffled.Grid
               key="demo"
               data={defaultData}
               renderItem={renderDemoItem}
@@ -367,7 +367,7 @@ function AppContent() {
               gapHorizontal={12}
             />
           ) : (
-            <ReshufflableGrid
+            <Reshuffled.Grid
               key={`puzzle-${puzzleSession}-${puzzleGridMode}`}
               data={puzzleData}
               renderItem={renderPuzzleItem}
