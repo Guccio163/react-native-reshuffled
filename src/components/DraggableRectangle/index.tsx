@@ -21,7 +21,7 @@ export function getDefaultZIndex(index: number): number {
 type DraggableRectangleProps<ItemT extends Cell> = {
   item: ItemT
   index: number
-  zIndexTrigger: number
+  zIndexTrigger: boolean
   renderItem: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
   renderShadow: (info: RenderItemInfo<ItemT>) => React.ReactElement | null
   onDragUpdate: (draggedItemId: string, finalX: number, finalY: number) => void
